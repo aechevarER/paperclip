@@ -323,6 +323,20 @@ export function Inbox() {
     enabled: !!selectedCompanyId,
   });
 
+
+  const {
+    data: assignedToMeIssuesRaw = [],
+    isLoading: isAssignedToMeLoading,
+  } = useQuery({
+    queryKey: queryKeys.issues.listAssignedToMe(selectedCompanyId!),
+    queryFn: () =>
+      issuesApi.list(selectedCompanyId!, {
+        assigneeUserId: "me",
+        status: "backlog,todo,in_progress,in_review,blocked",
+      }),
+    enabled: !!selectedCompanyId,
+  });
+
   const { data: heartbeatRuns, isLoading: isRunsLoading } = useQuery({
     queryKey: queryKeys.heartbeats(selectedCompanyId!),
     queryFn: () => heartbeatsApi.list(selectedCompanyId!),
@@ -334,6 +348,12 @@ export function Inbox() {
     () => touchedIssues.filter((issue) => issue.isUnreadForMe),
     [touchedIssues],
   );
+
+  const assignedToMeIssues = useMemo(
+    () => [...assignedToMeIssuesRaw].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+    [assignedToMeIssuesRaw],
+  );
+  const hasAssignedToMe = assignedToMeIssues.length > 0;
 
   const agentById = useMemo(() => {
     const map = new Map<string, string>();
@@ -719,6 +739,36 @@ export function Inbox() {
                     </div>
                   </div>
                 </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {hasAssignedToMe && (
+        <>
+          <Separator />
+          <div>
+            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+              Assigned to Me
+            </h3>
+            <div className="divide-y divide-border border border-border">
+              {assignedToMeIssues.map((issue) => (
+                <Link
+                  key={issue.id}
+                  to={`/issues/${issue.identifier ?? issue.id}`}
+                  className="flex min-w-0 cursor-pointer items-start gap-2 px-3 py-3 no-underline text-inherit transition-colors hover:bg-accent/50 sm:items-center sm:gap-3 sm:px-4"
+                >
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium">
+                    {issue.identifier && (
+                      <span className="mr-2 text-xs text-muted-foreground">{issue.identifier}</span>
+                    )}
+                    {issue.title}
+                  </span>
+                  {issue.priority != null && (
+                    <span className="text-xs text-muted-foreground capitalize">{issue.priority}</span>
+                  )}
+                </Link>
               ))}
             </div>
           </div>
