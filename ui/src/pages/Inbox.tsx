@@ -350,7 +350,12 @@ export function Inbox() {
   );
 
   const assignedToMeIssues = useMemo(
-    () => [...assignedToMeIssuesRaw].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()),
+    () => [...assignedToMeIssuesRaw].sort((a, b) => {
+      const aUnread = a.isUnreadForMe ? 1 : 0;
+      const bUnread = b.isUnreadForMe ? 1 : 0;
+      if (bUnread !== aUnread) return bUnread - aUnread;
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    }),
     [assignedToMeIssuesRaw],
   );
   const hasAssignedToMe = assignedToMeIssues.length > 0;
@@ -759,6 +764,9 @@ export function Inbox() {
                   to={`/issues/${issue.identifier ?? issue.id}`}
                   className="flex min-w-0 cursor-pointer items-start gap-2 px-3 py-3 no-underline text-inherit transition-colors hover:bg-accent/50 sm:items-center sm:gap-3 sm:px-4"
                 >
+                  {issue.isUnreadForMe && (
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500 sm:mt-0" />
+                  )}
                   <span className="min-w-0 flex-1 truncate text-sm font-medium">
                     {issue.identifier && (
                       <span className="mr-2 text-xs text-muted-foreground">{issue.identifier}</span>
