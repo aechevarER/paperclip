@@ -26,7 +26,7 @@ import { redactCurrentUserText } from "../log-redaction.js";
 import { resolveIssueGoalId, resolveNextIssueGoalId } from "./issue-goal-fallback.js";
 import { getDefaultCompanyGoal } from "./goals.js";
 
-const ALL_ISSUE_STATUSES = ["backlog", "todo", "in_progress", "in_review", "blocked", "done", "cancelled"];
+const ALL_ISSUE_STATUSES = ["backlog", "todo", "in_progress", "in_review", "done", "cancelled"];
 
 function assertTransition(from: string, to: string) {
   if (from === to) return;
@@ -1451,7 +1451,7 @@ export function issueService(db: Db) {
             eq(issues.companyId, companyId),
             eq(issues.assigneeUserId, userId),
             isNull(issues.hiddenAt),
-            inArray(issues.status, ["backlog", "todo", "in_progress", "in_review", "blocked"]),
+            inArray(issues.status, ["backlog", "todo", "in_progress", "in_review"]),
           ),
         )
         .then((rows) => rows[0]);

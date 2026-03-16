@@ -332,7 +332,7 @@ export function Inbox() {
     queryFn: () =>
       issuesApi.list(selectedCompanyId!, {
         assigneeUserId: "me",
-        status: "backlog,todo,in_progress,in_review,blocked",
+        status: "backlog,todo,in_progress,in_review",
       }),
     enabled: !!selectedCompanyId,
   });
