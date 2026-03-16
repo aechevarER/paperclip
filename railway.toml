@@ -1,0 +1,12 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "node --import ./server/node_modules/tsx/dist/loader.mjs server/dist/index.js"
+healthcheckPath = "/"
+healthcheckTimeout = 120
+restartPolicyType = "on_failure"
+
+[[services]]
+name = "paperclip"
