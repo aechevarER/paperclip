@@ -1,6 +1,7 @@
 import { isValidElement, useEffect, useId, useState, type CSSProperties, type ReactNode } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import { parseProjectMentionHref } from "@paperclipai/shared";
 import { cn } from "../lib/utils";
 import { useTheme } from "../context/ThemeContext";
@@ -123,7 +124,7 @@ export function MarkdownBody({ children, className }: MarkdownBodyProps) {
       )}
     >
       <Markdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         components={{
           pre: ({ node: _node, children: preChildren, ...preProps }) => {
             const mermaidSource = extractMermaidSource(preChildren);
